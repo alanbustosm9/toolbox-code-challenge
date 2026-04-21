@@ -1,6 +1,7 @@
 import { VideoCarousel } from "@/features/carousel/components/VideoCarousel";
 import { useVideos } from "@/features/carousel/hooks/useVideos";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CarouselScreen() {
   const { carousels, loading, error } = useVideos();
@@ -21,7 +22,11 @@ export default function CarouselScreen() {
     );
   }
 
-  return <VideoCarousel carousels={carousels} />;
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <VideoCarousel carousels={carousels} />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -16,6 +16,14 @@ describe("VideoItem", () => {
     expect(screen.getByText("Test Video")).toBeTruthy();
   });
 
+  it("para poster, muestra el título dentro del reproductor abajo", () => {
+    render(<VideoItem video={mockVideo} type="poster" />);
+
+    expect(screen.getByTestId("poster-title-overlay")).toBeTruthy();
+    expect(screen.getByText("Test Video")).toBeTruthy();
+    expect(screen.queryByTestId("video-title-below")).toBeNull();
+  });
+
   it("muestra el botón play inicialmente (no está reproduciendo)", () => {
     render(<VideoItem video={mockVideo} type="thumbnail" />);
 

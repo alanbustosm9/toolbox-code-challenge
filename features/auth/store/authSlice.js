@@ -1,4 +1,4 @@
-import { ENDPOINTS, apiClient, clearToken, saveToken } from "@/lib";
+import { ENDPOINTS, apiClient, clearToken, getToken, isTokenValid, saveToken } from "@/lib";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -28,6 +28,18 @@ export const logout = createAsyncThunk("auth/logout", async () => {
   await clearToken();
 });
 
+export const initializeSession = createAsyncThunk(
+  "auth/initializeSession",
+  async () => {
+    const valid = await isTokenValid();
+    if (!valid) {
+      await clearToken();
+      return null;
+    }
+    return getToken();
+  },
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -48,6 +60,9 @@ const authSlice = createSlice({
       })
       .addCase(logout.fulfilled, (state) => {
         state.token = null;
+      })
+      .addCase(initializeSession.fulfilled, (state, action) => {
+        state.token = action.payload;
       });
   },
 });
