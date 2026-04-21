@@ -1,50 +1,111 @@
-# Welcome to your Expo app 👋
+# Toolbox Code Challenge
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil desarrollada con **React Native + Expo** que permite explorar colecciones de videos organizadas en carousels interactivos.
 
-## Get started
+---
 
-1. Install dependencies
+## ¿Qué hace la app?
 
-   ```bash
-   npm install
-   ```
+Al abrir la app, el usuario pasa por un flujo simple de autenticación y luego accede a una galería de videos agrupados por categorías.
 
-2. Start the app
+### Flujo principal
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+Inicio → Login → Galería de videos (carousel)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+1. **Login** — El usuario presiona "Ingresar" para autenticarse. La app obtiene un JWT desde la API y lo guarda de forma segura en el dispositivo.
 
-## Learn more
+2. **Galería** — Una vez autenticado, se muestran secciones de videos en formato carousel horizontal. Cada sección puede tener videos en formato **thumbnail** (16:9) o **poster** (3:2).
 
-To learn more about developing your project with Expo, look at the following resources:
+3. **Reproducción** — Al tocar un video, se reproduce directamente en la misma pantalla. Si el video no está disponible, se muestra un estado de error.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+4. **Sesión protegida** — El token JWT se valida automáticamente. Si expira, el usuario es redirigido al login sin necesidad de acción manual.
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## Stack tecnológico
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+| Capa                  | Tecnología                                       |
+| --------------------- | ------------------------------------------------ |
+| Framework             | Expo (SDK 54) + React Native                     |
+| Navegación            | Expo Router (file-based routing)                 |
+| Estado global         | Redux Toolkit                                    |
+| Reproductor           | react-native-video                               |
+| Almacenamiento seguro | expo-secure-store                                |
+| Testing               | Jest + jest-expo + @testing-library/react-native |
+
+---
+
+## Arquitectura
+
+El proyecto sigue principios **SOLID** y está organizado por features **SCREAMING ARCHITECTURE**:
+
+```
+app/                    # Rutas (Expo Router)
+  (auth)/               # Pantallas públicas
+  (private)/            # Pantallas protegidas (requieren token)
+features/
+  auth/                 # Lógica de autenticación
+  carousel/
+    components/         # VideoCarousel, CarouselSection, VideoItem, VideoPlayer
+    hooks/              # useVideos, useVideoPlayer
+    store/              # videosSlice (Redux)
+lib/                    # Utilidades compartidas (apiClient, tokenManager)
+providers/              # ReduxProvider
+store/                  # Configuración del store global
+```
+
+---
+
+## Requisitos previos
+
+Antes de correr la app en un dispositivo o simulador, asegurate de tener configurado el entorno correspondiente:
+
+### Android
+
+- Instalar [Android Studio](https://developer.android.com/studio)
+- Configurar un **AVD** (Android Virtual Device) desde el AVD Manager
+- Asegurarse de que `ANDROID_HOME` esté en las variables de entorno
+
+### iOS _(solo macOS)_
+
+- Instalar [Xcode](https://developer.apple.com/xcode/) desde la App Store
+- Instalar las herramientas de línea de comandos: `xcode-select --install`
+- Tener al menos un simulador descargado desde Xcode → Settings → Platforms
+
+---
+
+## Instalación y uso
+
+```bash
+# Instalar dependencias
+npm install
+
+# Correr en Android (requiere Android Studio)
+npx expo run:android
+
+# Correr en iOS (requiere Xcode, solo macOS)
+npx expo run:ios
+
+# Ejecutar tests
+npm test
+```
+
+---
+
+## Tests
+
+La suite cubre los módulos principales del carousel:
+
+```bash
+npm test
+```
+
+| Suite            | Descripción                                        |
+| ---------------- | -------------------------------------------------- |
+| `useVideoPlayer` | Estado de reproducción, toggle, manejo de errores  |
+| `videosSlice`    | Reducer, thunk fetch, estados loading/error        |
+| `VideoPlayer`    | Renderizado condicional: imagen, video, error      |
+| `VideoItem`      | Interacción, dimensiones por tipo, estado de error |
+| `VideoCarousel`  | Secciones, items, casos borde                      |
