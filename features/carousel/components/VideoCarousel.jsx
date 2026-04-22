@@ -1,19 +1,17 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { CarouselSection } from "./CarouselSection";
 
 export function VideoCarousel({ carousels }) {
   return (
-    <ScrollView
+    <FlatList
+      data={carousels}
+      keyExtractor={(carousel, index) => `${carousel.type}-${index}`}
+      renderItem={({ item: carousel }) => (
+        <CarouselSection carousel={carousel} />
+      )}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.container}
-    >
-      {carousels?.map((carousel, index) => (
-        <CarouselSection
-          key={`${carousel.type}-${index}`}
-          carousel={carousel}
-        />
-      ))}
-    </ScrollView>
+    />
   );
 }
 
