@@ -8,7 +8,7 @@ const DIMENSIONS = {
 };
 
 export function VideoItem({ video, type }) {
-  const { playing, error, handleError, handlePress, clearError } =
+  const { playing, error, hasStarted, handleError, handlePress, clearError } =
     useVideoPlayer(video.videoUrl);
   const isPoster = type === "poster";
   const { width, aspectRatio } = DIMENSIONS[type] ?? DIMENSIONS.thumbnail;
@@ -20,12 +20,16 @@ export function VideoItem({ video, type }) {
 
   const noVideo = !video.videoUrl;
 
+  // Como la API devuelve una imageUrl con una URL que no retorna nada dejo esto comentado para probar
+  // const imageUrl = `https://picsum.photos/${placeholderSize.width}/${placeholderSize.height}`;
+  const imageUrl = video.imageUrl;
+
   return (
     <TouchableOpacity
       testID="video-item"
       style={{ width }}
       onPress={handlePress}
-      activeOpacity={error ? 1 : 0.9}
+      activeOpacity={hasStarted || error ? 1 : 0.9}
     >
       <View
         style={[
@@ -36,14 +40,15 @@ export function VideoItem({ video, type }) {
       >
         <VideoPlayer
           videoUrl={video.videoUrl}
-          imageUrl={video.imageUrl}
+          imageUrl={imageUrl}
           playing={playing}
+          hasStarted={hasStarted}
           error={error}
           onError={handleError}
           placeholderSize={placeholderSize}
           clearError={clearError}
         />
-        {!playing && !error && (
+        {!hasStarted && !error && (
           <View style={styles.playButton}>
             <Text style={styles.playIcon}>▶</Text>
           </View>

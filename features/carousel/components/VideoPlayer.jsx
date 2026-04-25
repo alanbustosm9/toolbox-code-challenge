@@ -5,6 +5,7 @@ export function VideoPlayer({
   videoUrl,
   imageUrl,
   playing,
+  hasStarted,
   error,
   onError,
   clearError,
@@ -22,13 +23,13 @@ export function VideoPlayer({
     );
   }
 
-  if (playing) {
+  if (hasStarted) {
     return (
       <Video
         source={{ uri: videoUrl }}
         style={StyleSheet.absoluteFill}
         resizeMode="cover"
-        paused={false}
+        paused={!playing}
         onError={onError}
       />
     );
