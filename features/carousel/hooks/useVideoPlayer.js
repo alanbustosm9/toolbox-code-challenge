@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export function useVideoPlayer(videoUrl) {
   const [playing, setPlaying] = useState(false);
-  const [error, setError] = useState(!videoUrl);
+  const [error, setError] = useState(false);
 
   const handleError = () => {
     setPlaying(false);
@@ -11,8 +11,14 @@ export function useVideoPlayer(videoUrl) {
 
   const handlePress = () => {
     if (error) return;
+    if (!videoUrl) {
+      setError(true);
+      return;
+    }
     setPlaying((prev) => !prev);
   };
 
-  return { playing, error, handleError, handlePress };
+  const clearError = () => setError(false);
+
+  return { playing, error, handleError, handlePress, clearError };
 }

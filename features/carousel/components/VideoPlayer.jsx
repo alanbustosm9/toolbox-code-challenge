@@ -1,12 +1,23 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Video from "react-native-video";
 
-export function VideoPlayer({ videoUrl, imageUrl, playing, error, onError }) {
+export function VideoPlayer({
+  videoUrl,
+  imageUrl,
+  playing,
+  error,
+  onError,
+  clearError,
+}) {
   if (error) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
         <Text style={styles.errorText}>Video no disponible</Text>
+
+        <TouchableOpacity style={styles.errorButton} onPress={clearError}>
+          <Text style={{ color: "#fff" }}>Mostrar Imagen</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -49,5 +60,12 @@ const styles = StyleSheet.create({
     color: "#999",
     textAlign: "center",
     paddingHorizontal: 8,
+  },
+  errorButton: {
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: "#007bff",
+    borderRadius: 4,
   },
 });

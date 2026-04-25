@@ -8,9 +8,8 @@ const DIMENSIONS = {
 };
 
 export function VideoItem({ video, type }) {
-  const { playing, error, handleError, handlePress } = useVideoPlayer(
-    video.videoUrl,
-  );
+  const { playing, error, handleError, handlePress, clearError } =
+    useVideoPlayer(video.videoUrl);
   const isPoster = type === "poster";
   const { width, aspectRatio } = DIMENSIONS[type] ?? DIMENSIONS.thumbnail;
   const height = width * aspectRatio;
@@ -42,6 +41,7 @@ export function VideoItem({ video, type }) {
           error={error}
           onError={handleError}
           placeholderSize={placeholderSize}
+          clearError={clearError}
         />
         {!playing && !error && (
           <View style={styles.playButton}>
